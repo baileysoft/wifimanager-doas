@@ -1,0 +1,11 @@
+To install wifi manager follow these instructions:
+1) enter the directory of the wifimanager files
+
+2) if the install.sh file is not an executable, in the terminal run the command
+   chmod +x install.sh
+
+3) in the terminal run the command ./install.sh
+
+DONE!
+you can now use the command wifimanager to connect to the internet.
+

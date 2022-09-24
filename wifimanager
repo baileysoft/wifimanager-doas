@@ -1,0 +1,65 @@
+#!/bin/sh
+
+mkdir ~/.config/ >/dev/null 2>&1
+mkdir ~/.config/wifimanager >/dev/null 2>&1
+cd ~/.config/wifimanager
+
+
+addNetwork(){
+	echo "What do you want to call your network?"
+	read network
+	echo "What is the network's SSID?"
+	read ssid
+	echo "What is the network's Password?"
+	read password
+	
+	touch $network
+	echo "ctrl_interface=/run/wpa_supplicant" > ./$network
+	echo "update_config=1" >> ./$network
+        doas wpa_passphrase $ssid $password >> ./$network
+
+	echo "$network config file created"
+}
+
+listNetworks() {
+	echo "$( ( ls ) )"
+}
+
+removeNetwork() {
+	echo "Which network do you want to remove?"
+	read rmnetwork
+	rm ./$rmnetwork
+}
+
+connect () {
+	echo "which network do you want to connect to?"
+	read networkname
+	ip link
+	echo "Which device is your wireless card? (usially formatted as <wlpXsX>)"
+	read devicename
+	doas wpa_supplicant -i $devicename -c ./$networkname
+}
+
+while :
+do
+	echo "Connect (c), Add new network (a), Remove network (r), List network config files (l), quit (q)"
+	read option
+
+	if test $option = "a"
+		then
+		addNetwork
+	elif test $option = "l"
+		then
+		listNetworks	
+	elif test $option = "r"
+		then
+		removeNetwork
+	elif test $option = "c"
+		then
+		connect
+	elif test $option = "q"
+		then
+		exit 0
+	fi
+done
+
