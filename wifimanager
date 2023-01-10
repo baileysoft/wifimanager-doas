@@ -34,15 +34,22 @@ removeNetwork() {
 connect () {
 	echo "which network do you want to connect to?"
 	read networkname
+	devicename=`cat ./device`
+	doas rm /run/wpa_supplicant/$devicename
+	doas wpa_supplicant -B -i $devicename -c ./$networkname
+}
+
+setCard () {
 	ip link
-	echo "Which device is your wireless card? (usially formatted as <wlpXsX>)"
-	read devicename
-	doas wpa_supplicant -i $devicename -c ./$networkname
+	echo "Which device is your wireless card name (Usually formatted at <wlpXsX>)"
+	read deviceName
+	touch device
+	echo $deviceName > ./device
 }
 
 while :
 do
-	echo "Connect (c), Add new network (a), Remove network (r), List network config files (l), quit (q)"
+	echo "Connect (c), Add new network (a), Remove network (r), List network config files (l), Set wireless card (s), quit (q)"
 	read option
 
 	if test $option = "a"
@@ -57,6 +64,9 @@ do
 	elif test $option = "c"
 		then
 		connect
+	elif test $option = "s"
+		then
+		setCard
 	elif test $option = "q"
 		then
 		exit 0
